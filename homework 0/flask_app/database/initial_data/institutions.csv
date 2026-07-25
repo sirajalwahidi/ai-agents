@@ -1,4 +1,5 @@
-"inst_id","type","name","department","address","city","state","zip"
-"1","Academia","Michigan State University","Computer Science",NULL,"East Lansing","Michigan",NULL
-"2","Government","National Institutes of Health",NULL,NULL,"Bethesda","Maryland",NULL
-"3","Industry","Standard and Poor's Financial Services","Ratings",NULL,"New York City","New York",NULL
+inst_id,type,name,department,address,city,state,zip
+1,Freelance,Independent Technical Services,Software & Systems Development,,Gaza,PS,
+2,Academia,University College of Applied Sciences (UCAS),Software Engineering & Databases,"Tal Al-Hawa, 8th St.",Gaza,PS,
+3,NGO,Palestine Red Crescent Society (PRCS) - North Gaza,Software Development Division,Near Zemo Roundabout,North Gaza,PS,
+4,Academia,Khalil Al-Rahman Boys High School,Literary Branch,Near Al-Taleem Roundabout,North Gaza,PS,

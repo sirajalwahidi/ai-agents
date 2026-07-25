@@ -1,5 +1,5 @@
-"position_id","inst_id","title","responsibilities","start_date","end_date"
-"1","1","Instructor","Teach classes; mostly NLP and Web design.","2019-01-01",NULL
-"2","1","Researcher","Perform research at interface of AI and healthcare.","2019-01-01",NULL
-"3","2","National Scholar","Helped the government plan the future of science","2021-01-01","2021-12-31"
-"4","3","Associate Director","Used data science to assess corporation and nations","2019-01-01","2020-01-01"
+position_id,inst_id,title,responsibilities,start_date,end_date
+1,1,Software & Systems Developer,"Combining continuous self-directed mastery of Computer Science fundamentals with practical software development, hands-on systems troubleshooting, and OS/hardware optimization.",2015-01-01,Present
+2,2,Software Engineering & Databases Graduate,"Studied application and website development; focused on building solid foundations in database design, backend logic, and system architecture.",2021-09-25,2023-07-27
+3,3,Android & Back-end Developer,"Engineered the application and backend infrastructure for the PRCS N-GAZA native Android application, designing RESTful APIs, implementing RoomDatabase for offline sync, and developing Excel reporting tools.",2023-01-03,2023-07-20
+4,4,High School Graduate (Literary Branch),Completed secondary education (Tawjihi) in the Literary Branch with an overall score of 91.6%,2020-01-09,2021-06-30
