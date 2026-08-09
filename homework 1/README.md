@@ -568,7 +568,7 @@ Push your work to your fork:
 ```bash
 cd "homework 1"
 git add .
-git commit -m "Homework 1"
+git commit -m "Homework 1 - Multi-Expert Agent System"
 git push origin main
 ```
 
