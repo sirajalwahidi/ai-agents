@@ -1,0 +1,381 @@
+<title>Semantic Search & Vectors — Concept Note</title>
+<style>
+  :root {
+    --bg: #F5F6FA;
+    --surface: #FFFFFF;
+    --surface-inset: #ECEFF9;
+    --text: #1A1D2B;
+    --text-muted: #565B72;
+    --accent: #3548C4;
+    --accent-strong: #22308F;
+    --line: #DBDFEC;
+    --code-text: #2A2E42;
+    --shadow: 0 1px 2px rgba(26, 29, 43, 0.04), 0 8px 24px rgba(26, 29, 43, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #14161F;
+      --surface: #1B1E2B;
+      --surface-inset: #222641;
+      --text: #E7E9F5;
+      --text-muted: #9AA0B8;
+      --accent: #8C99FF;
+      --accent-strong: #B7BFFF;
+      --line: #2B2F45;
+      --code-text: #D7DAEE;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --bg: #14161F;
+    --surface: #1B1E2B;
+    --surface-inset: #222641;
+    --text: #E7E9F5;
+    --text-muted: #9AA0B8;
+    --accent: #8C99FF;
+    --accent-strong: #B7BFFF;
+    --line: #2B2F45;
+    --code-text: #D7DAEE;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 24px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    font-size: 17px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 4rem 1.5rem 6rem;
+  }
+
+  .eyebrow {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.9rem;
+  }
+
+  h1 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    font-size: clamp(2.1rem, 5vw, 2.75rem);
+    font-weight: 600;
+    line-height: 1.12;
+    letter-spacing: -0.01em;
+    margin: 0 0 0.85rem;
+    text-wrap: balance;
+  }
+
+  .dek {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    margin: 0 0 2.6rem;
+    max-width: 42ch;
+    text-wrap: balance;
+  }
+
+  h2 {
+    font-family: "Iowan Old Style", "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.55rem;
+    letter-spacing: -0.005em;
+    margin: 3.2rem 0 1rem;
+    text-wrap: balance;
+  }
+
+  h2 .num {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    margin-right: 0.5rem;
+  }
+
+  p { margin: 0 0 1.1rem; }
+  p.lead { font-size: 1.08rem; }
+
+  strong { font-weight: 600; }
+  em.term { font-style: normal; font-weight: 600; color: var(--accent-strong); }
+
+  code {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 0.86em;
+    background: var(--surface-inset);
+    color: var(--code-text);
+    padding: 0.12em 0.4em;
+    border-radius: 4px;
+  }
+
+  figure {
+    margin: 1.8rem 0 2.2rem;
+    padding: 1.4rem 1.4rem 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  figure svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  figcaption {
+    margin-top: 0.9rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+  }
+
+  .callout {
+    margin: 1.6rem 0;
+    padding: 1.1rem 1.3rem;
+    background: var(--surface-inset);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 10px 10px 0;
+  }
+
+  .callout .label {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.5rem;
+  }
+
+  .callout pre {
+    margin: 0.6rem 0 0;
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 0.82rem;
+    line-height: 1.55;
+    color: var(--code-text);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .callout p:last-child { margin-bottom: 0; }
+
+  .score-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0.4rem 0 0;
+    font-size: 0.92rem;
+  }
+
+  .score-table th, .score-table td {
+    text-align: left;
+    padding: 0.5rem 0.7rem;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .score-table th {
+    font-size: 0.72rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .score-table td.num {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+
+  .score-table tr.match td { color: var(--accent-strong); font-weight: 600; }
+
+  .recap {
+    margin-top: 3rem;
+    padding: 1.6rem 1.6rem;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    box-shadow: var(--shadow);
+  }
+
+  .recap .label {
+    font-family: ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 0.6rem;
+  }
+
+  .recap p { margin: 0; font-size: 1.02rem; }
+
+  .diagram-label { font-size: 12px; }
+  .diagram-sub { font-size: 10.5px; fill: var(--text-muted); }
+
+  a { color: var(--accent-strong); }
+
+  ::selection { background: var(--accent); color: var(--surface); }
+</style>
+
+<div class="page">
+
+  <p class="eyebrow">CSE 491 — AI Agents · Concept Note</p>
+  <h1>What "semantic" means when a machine searches</h1>
+  <p class="dek">Two ideas underneath Homework 2's semantic search: turning text into a vector, and measuring how similar two vectors are.</p>
+
+  <p class="lead">Homework 1's Database Read Expert only understood exact spelling — ask about <code>'MSU'</code> and it generates <code>WHERE name = 'MSU'</code>, which matches nothing, because the row is stored as <code>'Michigan State University'</code>. Homework 2 fixes this with two building blocks: <em class="term">embeddings</em>, which turn text into numbers that capture meaning, and <em class="term">cosine similarity</em>, which measures how close two of those number-lists are. This note walks through both, using the real numbers your own code produced.</p>
+
+  <h2><span class="num">1</span>A vector is a list of numbers that stands in for meaning</h2>
+
+  <p>An <em class="term">embedding</em> is what you get when you feed a piece of text into a model trained to represent meaning numerically. The model returns a fixed-length list of floats — for the model this homework uses, <code>openai/text-embedding-3-small</code>, that list has exactly <strong>1536</strong> numbers, regardless of whether the input text was one word or one paragraph:</p>
+
+  <div class="callout">
+    <p class="label">flask_app/utils/embeddings.py</p>
+    <pre>generate_embedding("Michigan State University")
+  → [0.0113, -0.0271, 0.0042, ..., 0.0089]   # 1536 numbers
+
+generate_embedding("MSU")
+  → [0.0119, -0.0258, 0.0039, ..., 0.0095]   # 1536 numbers, very close to the above</pre>
+  </div>
+
+  <p>Nothing about those two input strings overlaps character-for-character. But because the model was trained on how language is actually used — and "MSU" and "Michigan State University" show up in near-identical contexts across huge amounts of text — the two output vectors land close to each other in that 1536-dimensional space. That closeness <em>is</em> the thing semantic search exploits. A vector by itself is just a list of numbers; it becomes useful the moment you can ask "how close is this one to that one?"</p>
+
+  <h2><span class="num">2</span>"Close" means the angle between two vectors, not the distance</h2>
+
+  <p>It's tempting to picture embeddings as points on a map, where "close" means a short distance between them. That's not quite what these models are compared by. What matters is <em class="term">cosine similarity</em> — not how far apart two vectors' tips are, but how similar their <em>directions</em> are, measured as the angle between them from the origin:</p>
+
+  <figure>
+    <svg viewBox="0 0 640 300" role="img" aria-label="Three vectors drawn from the origin: MSU and Michigan State University point in nearly the same direction with a small angle and cosine similarity 0.704 between them, while Standard and Poor's Financial Services points in a much more different direction with cosine similarity 0.204.">
+      <defs>
+        <marker id="arrow-accent" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--accent)" />
+        </marker>
+        <marker id="arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="var(--text-muted)" />
+        </marker>
+      </defs>
+
+      <!-- axes -->
+      <line x1="40" y1="270" x2="600" y2="270" stroke="var(--line)" stroke-width="1.5" />
+      <line x1="40" y1="270" x2="40" y2="30" stroke="var(--line)" stroke-width="1.5" />
+      <text x="40" y="288" class="diagram-sub" text-anchor="start">origin (0, 0)</text>
+
+      <!-- angle arc: MSU vs Michigan State University (small angle) -->
+      <path d="M 128 216 A 90 90 0 0 1 118 200" fill="none" stroke="var(--accent)" stroke-width="1.5" opacity="0.6" />
+
+      <!-- Michigan State University vector (accent, target) -->
+      <line x1="40" y1="270" x2="470" y2="70" stroke="var(--accent)" stroke-width="2.5" marker-end="url(#arrow-accent)" />
+      <text x="478" y="66" class="diagram-label" fill="var(--accent-strong)" font-weight="600">Michigan State University</text>
+
+      <!-- MSU vector (accent, query, nearly overlapping) -->
+      <line x1="40" y1="270" x2="440" y2="96" stroke="var(--accent)" stroke-width="2.5" stroke-dasharray="1 5" stroke-linecap="round" marker-end="url(#arrow-accent)" />
+      <text x="300" y="112" class="diagram-label" fill="var(--accent-strong)" font-weight="600">query: "MSU"</text>
+      <text x="300" y="128" class="diagram-sub">cos θ = 0.704</text>
+
+      <!-- unrelated vector (muted, far angle) -->
+      <line x1="40" y1="270" x2="270" y2="242" stroke="var(--text-muted)" stroke-width="2" marker-end="url(#arrow-muted)" />
+      <text x="278" y="246" class="diagram-label" fill="var(--text-muted)">Standard &amp; Poor's Financial Services</text>
+      <text x="278" y="262" class="diagram-sub">cos θ = 0.204</text>
+    </svg>
+    <figcaption><strong>Figure 1.</strong> A 2-dimensional sketch of what's really a 1536-dimensional space (drawn flat here so the angle is visible). The query vector for <code>"MSU"</code> points almost the same direction as the stored <code>"Michigan State University"</code> row — a small angle, cosine similarity 0.704. An unrelated institution's vector points off at a much wider angle — cosine similarity 0.204. Both numbers are real output from <code>db.semanticSearch('institutions', 'MSU')</code> in your Homework 2 database.</figcaption>
+  </figure>
+
+  <p>The formula behind that angle is the <em class="term">dot product</em> of the two vectors, divided by the product of their lengths — which cancels out length entirely and leaves only direction:</p>
+
+  <div class="callout">
+    <p class="label">flask_app/utils/database.py — _cosineSimilarity</p>
+    <pre>dot_product = sum(a * b for a, b in zip(vector_a, vector_b))
+magnitude_a = sqrt(sum(a * a for a in vector_a))
+magnitude_b = sqrt(sum(b * b for b in vector_b))
+similarity  = dot_product / (magnitude_a * magnitude_b)</pre>
+  </div>
+
+  <p>The result always falls between <strong>−1</strong> (pointing in exactly opposite directions — opposite meaning) and <strong>1</strong> (pointing in exactly the same direction — identical meaning). Dividing by both magnitudes is what makes this a comparison of <em>meaning</em> rather than of <em>length</em>: a long paragraph about Python and a short phrase about Python should score as similar, even though their raw vectors have very different magnitudes.</p>
+
+  <h2><span class="num">3</span>Semantic search: rank every row by that score</h2>
+
+  <p>Semantic search is what you get by repeating that comparison across an entire table and keeping the highest scores. Asking <em>"What AI skills do I have?"</em> against the <code>skills</code> table produced exactly this, using your real seeded data:</p>
+
+  <table class="score-table">
+    <thead><tr><th>Skill</th><th>Cosine similarity</th></tr></thead>
+    <tbody>
+      <tr class="match"><td>Machine Learning</td><td class="num">0.590</td></tr>
+      <tr class="match"><td>Deep Learning</td><td class="num">0.450</td></tr>
+      <tr><td>Python</td><td class="num">0.221</td></tr>
+    </tbody>
+  </table>
+
+  <p style="margin-top: 0.9rem;">Notice that none of the matched skill names contain the word "AI" at all — the ranking comes entirely from meaning, not shared vocabulary. This is the mechanism behind your Database Semantic Search Expert — a dedicated expert the Orchestrator routes to instead of the Database Read Expert whenever a request can't be answered by exact SQL matching, which then hands the table and search text to <code>db.semanticSearch()</code> to do the ranking shown above.</p>
+
+  <h2><span class="num">4</span>Two different moments an embedding gets computed</h2>
+
+  <p>There's a design choice hiding in "compare against every row": when do those row-level vectors get computed? Computing one on every single question would be needlessly expensive, since a row's embedding only changes when the row's text does. So the work is split into two separate moments that only meet at comparison time:</p>
+
+  <figure>
+    <svg viewBox="0 0 640 340" role="img" aria-label="Write-time pipeline: row text is embedded once by insertRows or backfillEmbeddings and stored in the embedding column. Read-time pipeline: the user's query text is embedded fresh on every question. The two paths meet at a cosine similarity comparison step, which produces ranked results.">
+      <defs>
+        <marker id="arrow2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6.5" markerHeight="6.5" orient="auto-start-reverse">
+          <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
+        </marker>
+      </defs>
+
+      <!-- WRITE-TIME lane -->
+      <text x="20" y="26" class="diagram-label" fill="var(--text-muted)" font-weight="600" letter-spacing="0.04em">WRITE TIME · once per row</text>
+      <rect x="20" y="42" width="150" height="46" rx="8" fill="none" stroke="currentColor" stroke-width="1.4" />
+      <text x="95" y="70" class="diagram-label" text-anchor="middle">row text</text>
+      <text x="95" y="16" class="diagram-sub" text-anchor="middle"></text>
+
+      <line x1="170" y1="65" x2="222" y2="65" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow2)" />
+      <text x="196" y="56" class="diagram-sub" text-anchor="middle">embed</text>
+
+      <rect x="222" y="42" width="160" height="46" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.6" />
+      <text x="302" y="65" class="diagram-label" text-anchor="middle" fill="var(--accent-strong)" font-weight="600">generate_embedding()</text>
+
+      <line x1="382" y1="65" x2="434" y2="65" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow2)" />
+      <text x="408" y="56" class="diagram-sub" text-anchor="middle">store</text>
+
+      <rect x="434" y="42" width="186" height="46" rx="8" fill="none" stroke="currentColor" stroke-width="1.4" />
+      <text x="527" y="63" class="diagram-label" text-anchor="middle">embedding column</text>
+      <text x="527" y="78" class="diagram-sub" text-anchor="middle">insertRows / backfillEmbeddings</text>
+
+      <line x1="527" y1="88" x2="527" y2="150" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow2)" />
+
+      <!-- READ-TIME lane -->
+      <text x="20" y="196" class="diagram-label" fill="var(--text-muted)" font-weight="600" letter-spacing="0.04em">READ TIME · once per question</text>
+      <rect x="20" y="212" width="150" height="46" rx="8" fill="none" stroke="currentColor" stroke-width="1.4" />
+      <text x="95" y="240" class="diagram-label" text-anchor="middle">query text</text>
+
+      <line x1="170" y1="235" x2="222" y2="235" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow2)" />
+      <text x="196" y="226" class="diagram-sub" text-anchor="middle">embed</text>
+
+      <rect x="222" y="212" width="160" height="46" rx="8" fill="none" stroke="var(--accent)" stroke-width="1.6" />
+      <text x="302" y="235" class="diagram-label" text-anchor="middle" fill="var(--accent-strong)" font-weight="600">generate_embedding()</text>
+
+      <line x1="382" y1="235" x2="500" y2="180" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow2)" />
+
+      <!-- comparison meeting point -->
+      <rect x="434" y="150" width="186" height="46" rx="8" fill="var(--surface-inset)" stroke="var(--accent)" stroke-width="1.8" />
+      <text x="527" y="171" class="diagram-label" text-anchor="middle" fill="var(--accent-strong)" font-weight="600">_cosineSimilarity()</text>
+      <text x="527" y="186" class="diagram-sub" text-anchor="middle">one query vector vs. every row vector</text>
+
+      <line x1="527" y1="196" x2="527" y2="260" stroke="currentColor" stroke-width="1.4" marker-end="url(#arrow2)" />
+      <rect x="434" y="260" width="186" height="46" rx="8" fill="none" stroke="currentColor" stroke-width="1.4" />
+      <text x="527" y="288" class="diagram-label" text-anchor="middle">ranked results (top_k)</text>
+    </svg>
+    <figcaption><strong>Figure 2.</strong> Row text only gets embedded once — when it's written (<code>insertRows</code>) or, for the CSV-seeded starting data, once at startup (<code>backfillEmbeddings</code>). A question's text gets embedded fresh every time it's asked. The two paths only meet at <code>_cosineSimilarity()</code>, inside <code>semanticSearch()</code> — which is why asking ten questions in a row doesn't re-embed your entire resume ten times.</figcaption>
+  </figure>
+
+  <div class="recap">
+    <p class="label">In one sentence</p>
+    <p>An embedding turns text into a direction in a 1536-number space; cosine similarity measures how closely two directions match; semantic search is just doing that comparison against every row and keeping the closest ones — computed once per row when it's written, and once per question when it's asked.</p>
+  </div>
+
+</div>
