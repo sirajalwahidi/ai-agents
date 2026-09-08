@@ -1,0 +1,25 @@
+skill_id,experience_id,name,skill_level
+1,1,OS Troubleshooting & Maintenance,9
+2,1,System & Boot Configuration (BIOS/GPT),9
+3,1,Thermal Tuning & Power Management,9
+4,1,Storage & File System Management,8
+5,2,Java & Android SDK,9
+6,2,Retrofit (Online API Connection),9
+7,2,MVVM Architecture (Offline Room),9
+8,2,RoomDatabase (Offline Storage),8
+9,2,MVC Architecture (Request/Response),8
+10,2,Local Excel Export (Java/Android POI),8
+11,2,System Integration & Sync,8
+12,3,PHP & Laravel,9
+13,3,RESTful APIs Development,9
+14,3,Postman (API Testing),9
+15,3,Wamp Server (Local Dev Environment),8
+16,3,Hostinger Deployment (Live Hosting),8
+17,3,API Excel Export (Laravel Excel),8
+18,3,Laravel Security & Middleware,9
+19,3,API Authentication & Live Deployment,8
+20,4,Java & Android SDK,8
+21,4,PHP & Laravel,8
+22,4,MVVM & MVC Architectures,8
+23,4,MySQL Database,8
+24,4,Database Design & Normalization,8
