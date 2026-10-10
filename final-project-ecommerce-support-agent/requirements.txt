@@ -1,0 +1,5 @@
+# Requirements for the AI Resume Agent app
+# Install all of these with: pip install -r requirements.txt
+
+google-genai>=1.0.0    # official Google Gemini SDK: provides API integration, function calling, and chat session orchestration
+python-dotenv==1.0.1   # reads the .env file to safely load environment variables (API keys)
